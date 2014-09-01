@@ -1,6 +1,6 @@
 package net.hehan.criminalintent;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 
 /**
  * Created by han on 14-9-1.
