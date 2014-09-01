@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * Created by han on 14-9-1.
@@ -40,5 +41,31 @@ public class CrimePagerActivity extends FragmentActivity {
                 return mCrimes.size();
             }
         });
+
+        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int i, float v, int i2) {
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int i) {
+            }
+
+            @Override
+            public void onPageSelected(int i) {
+                Crime c = mCrimes.get(i);
+                if(c.getTitle() != null) {
+                    setTitle(c.getTitle());
+                }
+            }
+        });
+
+        UUID crimeId = (UUID) getIntent().getSerializableExtra(CrimeFragment.EXTRA_CRIME_ID);
+        for(int i = 0; i < mCrimes.size(); i++) {
+            if(mCrimes.get(i).getId().equals(crimeId)) {
+                mViewPager.setCurrentItem(i);
+                break;
+            }
+        }
     }
 }
