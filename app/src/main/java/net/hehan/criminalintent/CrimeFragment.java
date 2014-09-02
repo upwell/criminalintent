@@ -1,7 +1,11 @@
 package net.hehan.criminalintent;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -12,6 +16,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -19,6 +24,9 @@ import java.util.UUID;
  */
 public class CrimeFragment extends Fragment {
     public static final String EXTRA_CRIME_ID = "net.hehan.criminalintent.crime_id";
+    public static final int REQUEST_DATE = 0;
+
+    private static final String DIALOG_DATE = "date";
 
     private Crime mCrime;
     private EditText mCrimeTitle;
@@ -33,6 +41,17 @@ public class CrimeFragment extends Fragment {
         fragment.setArguments(args);
 
         return fragment;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode != Activity.RESULT_OK) return;
+
+        if(requestCode == REQUEST_DATE) {
+            Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
+            mCrime.setDate(date);
+            mDate.setText(date.toString());
+        }
     }
 
     @Override
@@ -69,7 +88,15 @@ public class CrimeFragment extends Fragment {
 
         mDate = (Button) v.findViewById(R.id.crime_date);
         mDate.setText(mCrime.getDate().toString());
-        mDate.setEnabled(false);
+        mDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentManager fm = getActivity().getSupportFragmentManager();
+                DatePickerFragment dialog = DatePickerFragment.newInstance(mCrime.getDate());
+                dialog.setTargetFragment(CrimeFragment.this, REQUEST_DATE);
+                dialog.show(fm, DIALOG_DATE);
+            }
+        });
 
         mSolved = (CheckBox) v.findViewById(R.id.crime_solved);
         mSolved.setChecked(mCrime.isSolved());
