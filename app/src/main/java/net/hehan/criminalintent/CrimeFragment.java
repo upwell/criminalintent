@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 
+import java.sql.Time;
 import java.util.Date;
 import java.util.UUID;
 
@@ -23,10 +25,14 @@ import java.util.UUID;
  * Created by han on 14-8-31.
  */
 public class CrimeFragment extends Fragment {
+    public static final String TAG = "CrimeFragment";
     public static final String EXTRA_CRIME_ID = "net.hehan.criminalintent.crime_id";
     public static final int REQUEST_DATE = 0;
+    public static final int REQUEST_TIME = 1;
+    public static final int REQUEST_CHOICE = 1;
 
     private static final String DIALOG_DATE = "date";
+    private static final String DIALOG_CHOICE = "choice";
 
     private Crime mCrime;
     private EditText mCrimeTitle;
@@ -49,6 +55,12 @@ public class CrimeFragment extends Fragment {
 
         if(requestCode == REQUEST_DATE) {
             Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
+            Log.d(TAG, "return from date picker");
+            mCrime.setDate(date);
+            mDate.setText(date.toString());
+        } else if(requestCode == REQUEST_TIME) {
+            Date date = (Date) data.getSerializableExtra(TimePickerFragment.EXTRA_TIME);
+            Log.d(TAG, "return from time picker");
             mCrime.setDate(date);
             mDate.setText(date.toString());
         }
@@ -92,9 +104,12 @@ public class CrimeFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 FragmentManager fm = getActivity().getSupportFragmentManager();
-                DatePickerFragment dialog = DatePickerFragment.newInstance(mCrime.getDate());
-                dialog.setTargetFragment(CrimeFragment.this, REQUEST_DATE);
-                dialog.show(fm, DIALOG_DATE);
+//                DatePickerFragment dialog = DatePickerFragment.newInstance(mCrime.getDate());
+//                dialog.setTargetFragment(CrimeFragment.this, REQUEST_DATE);
+//                dialog.show(fm, DIALOG_DATE);
+                PickerChoiceFragment dialog = PickerChoiceFragment.newInstance(mCrime.getDate());
+                dialog.setTargetFragment(CrimeFragment.this, REQUEST_CHOICE);
+                dialog.show(fm, DIALOG_CHOICE);
             }
         });
 
